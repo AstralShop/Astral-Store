@@ -111,3 +111,6 @@ function findProductById(id) {
 function formatPrice(value) {
   return `$${value.toFixed(2)}`;
 }
+window.getSelectedProduct = getSelectedProduct;
+window.findProductById = findProductById;
+window.formatPrice = formatPrice;
