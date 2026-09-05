@@ -130,3 +130,5 @@ function setButtonLoading(button, isLoading) {
   }
 }
 window.initImageFallbacks = initImageFallbacks;
+window.clearFieldError = clearFieldError;
+window.setButtonLoading = setButtonLoading;
