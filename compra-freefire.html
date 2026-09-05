@@ -57,8 +57,8 @@
   <script type="module">
     document.addEventListener("DOMContentLoaded", () => {
       const container = document.getElementById("purchaseContent");
-      const productId = getSelectedProduct();
-      const found = productId ? findProductById(productId) : null;
+      const productId = window.getSelectedProduct ? window.getSelectedProduct() : null;
+      const found = (productId && window.findProductById) ? window.findProductById(productId) : null;
 
       if (!found || found.game !== "freefire") {
         container.innerHTML = `
@@ -72,6 +72,7 @@
       }
 
       const { product } = found;
+      const priceFormatted = window.formatPrice ? window.formatPrice(product.price) : `$${product.price}`;
 
       container.innerHTML = `
         <div class="purchase-grid">
@@ -87,7 +88,7 @@
 
             <div>
               <span class="purchase-panel__label">Precio</span>
-              <div class="purchase-panel__price">${formatPrice(product.price)}</div>
+              <div class="purchase-panel__price">${priceFormatted}</div>
             </div>
 
             <div class="divider"></div>
@@ -109,37 +110,43 @@
         </div>
       `;
 
-      // Reaplicamos el fallback de imagen porque este bloque se insertó
-      // después de que main.js ya buscó las imágenes existentes en la página.
-      initImageFallbacks();
+      if (window.initImageFallbacks) window.initImageFallbacks();
 
       const idInput = document.getElementById("freefireId");
       const idError = document.getElementById("freefireIdError");
       const continueBtn = document.getElementById("continueBtn");
 
-      idInput.addEventListener("input", () => clearFieldError(idInput, idError));
+      idInput.addEventListener("input", () => {
+        if (window.clearFieldError) window.clearFieldError(idInput, idError);
+      });
 
       continueBtn.addEventListener("click", async () => {
         const value = idInput.value.trim();
 
         if (!value) {
-          showFieldError(idInput, idError, "Por favor ingresa tu ID de Free Fire antes de continuar.");
+          if (window.showFieldError) {
+            window.showFieldError(idInput, idError, "Por favor ingresa tu ID de Free Fire antes de continuar.");
+          }
           idInput.focus();
           return;
         }
 
-        setButtonLoading(continueBtn, true);
+        if (window.setButtonLoading) window.setButtonLoading(continueBtn, true);
+
         try {
-          await createOrder({
+          // Llama a createOrder expuesto en window por orders.js
+          await window.createOrder({
             product: product.name,
             game: "freefire",
             price: product.price,
             freeFireId: value,
           });
+
+          // Redirige sólo tras guardar exitosamente en Supabase y localStorage
           window.location.href = "confirmacion.html";
         } catch (error) {
-          console.error(error);
-          setButtonLoading(continueBtn, false);
+          console.error("Error en el proceso de compra:", error);
+          if (window.setButtonLoading) window.setButtonLoading(continueBtn, false);
           alert("No se pudo generar el pedido. Revisa la configuración de Supabase e inténtalo de nuevo.");
         }
       });
