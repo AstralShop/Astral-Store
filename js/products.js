@@ -111,6 +111,26 @@ function findProductById(id) {
 function formatPrice(value) {
   return `$${value.toFixed(2)}`;
 }
+
+// 1. Guarda la selección del producto
+function selectProduct(productId) {
+  localStorage.setItem('selectedProductId', productId);
+  const found = findProductById(productId);
+  if (found) {
+    if (found.game === 'freefire') {
+      window.location.href = 'compra-freefire.html';
+    } else if (found.game === 'roblox') {
+      window.location.href = 'compra-roblox.html';
+    }
+  }
+}
+
+// 2. Lee el ID del producto guardado
+function getSelectedProduct() {
+  return localStorage.getItem('selectedProductId');
+}
+
+// 3. Exponer funciones al entorno global window
 window.selectProduct = selectProduct;
 window.getSelectedProduct = getSelectedProduct;
 window.findProductById = findProductById;
