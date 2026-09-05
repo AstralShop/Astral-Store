@@ -53,10 +53,10 @@
     </div>
   </footer>
 
-  <script src="js/products.js"></script>
-  <script src="js/orders.js"></script>
-  <script src="js/main.js"></script>
-  <script>
+<script type="module" src="js/products.js"></script>
+  <script type="module" src="js/orders.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module">
     function renderFreeFireGrid() {
       const grid = document.getElementById("freefireGrid");
       if (!grid) return;
@@ -82,8 +82,8 @@
 
       grid.querySelectorAll("[data-product-id]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          setSelectedProduct(btn.getAttribute("data-product-id"));
-          window.location.href = "compra-freefire.html";
+          // CORREGIDO: Se cambia setSelectedProduct por selectProduct
+          selectProduct(btn.getAttribute("data-product-id"));
         });
       });
     }
