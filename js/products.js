@@ -131,6 +131,7 @@ function getSelectedProduct() {
 }
 
 // 3. Exponer funciones al entorno global window
+window.FREEFIRE_PRODUCTS = FREEFIRE_PRODUCTS;
 window.selectProduct = selectProduct;
 window.getSelectedProduct = getSelectedProduct;
 window.findProductById = findProductById;
