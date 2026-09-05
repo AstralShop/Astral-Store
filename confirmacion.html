@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedido generado — Astral Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="Astral Store" data-fallback-label="Astral Store" />
+        <span>Astral Store</span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Inicio</a>
+        <a href="freefire.html">Free Fire</a>
+        <a href="roblox.html">Roblox</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="confirmation container">
+      <div id="confirmationContent" class="confirmation-card">
+        <!-- Se llena dinámicamente a partir del último pedido guardado -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© <span data-year></span> Astral Store</span>
+      <span>Recargas rápidas y seguras</span>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script>const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);</script>
+  <script src="js/orders.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* --------------------------------------------------------------------
+       Enlace de WhatsApp
+       Reemplaza este valor por tu enlace real, por ejemplo:
+       "https://wa.me/593999999999?text=Hola..."
+       -------------------------------------------------------------------- */
+    const WHATSAPP_URL = "AQUI_PONDRE_MI_ENLACE";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("confirmationContent");
+      const order = getLastOrder();
+
+      if (!order) {
+        container.innerHTML = `
+          <h1>No encontramos ningún pedido</h1>
+          <p class="confirmation-note">Parece que aún no has generado una compra.</p>
+          <div class="confirmation-actions">
+            <a href="index.html" class="btn btn-primary">Volver al inicio</a>
+          </div>
+        `;
+        return;
+      }
+
+      const gameLabel = order.game === "freefire" ? "Free Fire" : "Roblox";
+
+      const idRow = order.freeFireId
+        ? `<div class="order-summary__row"><span>ID</span><span>${order.freeFireId}</span></div>`
+        : "";
+
+      container.innerHTML = `
+        <div class="confirmation-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <h1>¡Tu pedido ha sido generado!</h1>
+        <p class="confirmation-note">
+          El siguiente botón te llevará a una página de WhatsApp donde tienes que escribir tu Número de Compra.
+        </p>
+
+        <div class="order-number-label">Número de Compra</div>
+        <div class="order-number">${order.orderNumber}</div>
+
+        <div class="order-summary">
+          <div class="order-summary__row"><span>Juego</span><span>${gameLabel}</span></div>
+          <div class="order-summary__row"><span>Producto</span><span>${order.product}</span></div>
+          <div class="order-summary__row"><span>Precio</span><span>${formatPrice(order.price)}</span></div>
+          ${idRow}
+          <div class="order-summary__row"><span>Número de compra</span><span>${order.orderNumber}</span></div>
+        </div>
+
+        <div class="confirmation-actions">
+          <a href="${WHATSAPP_URL}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block">
+            Continuar con el pago (WhatsApp)
+          </a>
+          <a href="index.html" class="btn btn-secondary btn-block">Volver al inicio</a>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>

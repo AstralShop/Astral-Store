@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recargas Free Fire — Astral Store</title>
+  <meta name="description" content="Recargas de Diamantes de Free Fire. Elige tu paquete y compra en segundos." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="Astral Store" data-fallback-label="Astral Store" />
+        <span>Astral Store</span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Inicio</a>
+        <a href="freefire.html" class="active">Free Fire</a>
+        <a href="roblox.html">Roblox</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header container">
+      <div class="breadcrumb">
+        <a href="index.html">Inicio</a>
+        <span>/</span>
+        <span>Free Fire</span>
+      </div>
+      <h1>Recargas Free Fire</h1>
+      <p>Elige el paquete de Diamantes que quieras recargar.</p>
+    </section>
+
+    <section class="container">
+      <div class="product-grid" id="freefireGrid" aria-live="polite">
+        <!-- Los productos se generan dinámicamente desde js/products.js -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© <span data-year></span> Astral Store</span>
+      <span>Recargas rápidas y seguras</span>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    function renderFreeFireGrid() {
+      const grid = document.getElementById("freefireGrid");
+      if (!grid) return;
+
+      if (!FREEFIRE_PRODUCTS.length) {
+        grid.innerHTML = `<p class="empty-state">No hay productos disponibles por el momento.</p>`;
+        return;
+      }
+
+      grid.innerHTML = FREEFIRE_PRODUCTS.map((p) => `
+        <article class="product-card">
+          <div class="product-card__media">
+            <img src="${p.image}" alt="${p.name}" data-fallback-label="${p.name}" />
+          </div>
+          <div class="product-card__body">
+            <span class="product-card__name">${p.name}</span>
+            <span class="product-card__bonus">${p.bonus}</span>
+            <span class="product-card__price">${formatPrice(p.price)}</span>
+            <button class="btn btn-primary" data-product-id="${p.id}">Comprar</button>
+          </div>
+        </article>
+      `).join("");
+
+      grid.querySelectorAll("[data-product-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setSelectedProduct(btn.getAttribute("data-product-id"));
+          window.location.href = "compra-freefire.html";
+        });
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", renderFreeFireGrid);
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comprar Diamantes — Astral Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="Astral Store" data-fallback-label="Astral Store" />
+        <span>Astral Store</span>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html">Inicio</a>
+        <a href="freefire.html" class="active">Free Fire</a>
+        <a href="roblox.html">Roblox</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="purchase container">
+      <div class="breadcrumb">
+        <a href="index.html">Inicio</a>
+        <span>/</span>
+        <a href="freefire.html">Free Fire</a>
+        <span>/</span>
+        <span>Comprar</span>
+      </div>
+
+      <div id="purchaseContent">
+        <!-- Se llena dinámicamente. Si no hay producto seleccionado, se muestra un aviso. -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© <span data-year></span> Astral Store</span>
+      <span>Recargas rápidas y seguras</span>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script>const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);</script>
+  <script src="js/orders.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("purchaseContent");
+      const productId = getSelectedProduct();
+      const found = productId ? findProductById(productId) : null;
+
+      if (!found || found.game !== "freefire") {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No se encontró ningún producto seleccionado.</p>
+            <br />
+            <a href="freefire.html" class="btn btn-secondary">Volver a Free Fire</a>
+          </div>
+        `;
+        return;
+      }
+
+      const { product } = found;
+
+      container.innerHTML = `
+        <div class="purchase-grid">
+          <div class="purchase-media">
+            <img src="${product.image}" alt="${product.name}" data-fallback-label="${product.name}" />
+          </div>
+
+          <div class="purchase-panel">
+            <div>
+              <span class="purchase-panel__label">Producto seleccionado</span>
+              <h1 class="purchase-panel__name">${product.name}</h1>
+            </div>
+
+            <div>
+              <span class="purchase-panel__label">Precio</span>
+              <div class="purchase-panel__price">${formatPrice(product.price)}</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="field">
+              <label for="freefireId">Ingresa tu ID de Free Fire</label>
+              <input
+                type="text"
+                id="freefireId"
+                inputmode="numeric"
+                placeholder="Ejemplo: 12345678"
+                autocomplete="off"
+              />
+              <span class="field-error" id="freefireIdError" hidden></span>
+            </div>
+
+            <button class="btn btn-primary btn-block" id="continueBtn">Continuar al pago</button>
+          </div>
+        </div>
+      `;
+
+      // Reaplicamos el fallback de imagen porque este bloque se insertó
+      // después de que main.js ya buscó las imágenes existentes en la página.
+      initImageFallbacks();
+
+      const idInput = document.getElementById("freefireId");
+      const idError = document.getElementById("freefireIdError");
+      const continueBtn = document.getElementById("continueBtn");
+
+      idInput.addEventListener("input", () => clearFieldError(idInput, idError));
+
+      continueBtn.addEventListener("click", async () => {
+        const value = idInput.value.trim();
+
+        if (!value) {
+          showFieldError(idInput, idError, "Por favor ingresa tu ID de Free Fire antes de continuar.");
+          idInput.focus();
+          return;
+        }
+
+        setButtonLoading(continueBtn, true);
+        try {
+          await createOrder({
+            product: product.name,
+            game: "freefire",
+            price: product.price,
+            freeFireId: value,
+          });
+          window.location.href = "confirmacion.html";
+        } catch (error) {
+          console.error(error);
+          setButtonLoading(continueBtn, false);
+          alert("No se pudo generar el pedido. Revisa la configuración de Supabase e inténtalo de nuevo.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
