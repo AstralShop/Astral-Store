@@ -72,3 +72,6 @@ function getSelectedProduct() {
   }
 }
 window.createOrder = createOrder;
+window.getLastOrder = getLastOrder;
+window.setSelectedProduct = setSelectedProduct;
+window.getSelectedProduct = getSelectedProduct;
