@@ -53,7 +53,7 @@
     </div>
   </footer>
 
-<script type="module" src="js/products.js"></script>
+  <script type="module" src="js/products.js"></script>
   <script type="module" src="js/orders.js"></script>
   <script type="module" src="js/main.js"></script>
   <script type="module">
@@ -61,12 +61,15 @@
       const grid = document.getElementById("freefireGrid");
       if (!grid) return;
 
-      if (!FREEFIRE_PRODUCTS.length) {
+      // Leemos la lista directamente desde window para evitar errores de referencia
+      const products = window.FREEFIRE_PRODUCTS || [];
+
+      if (!products.length) {
         grid.innerHTML = `<p class="empty-state">No hay productos disponibles por el momento.</p>`;
         return;
       }
 
-      grid.innerHTML = FREEFIRE_PRODUCTS.map((p) => `
+      grid.innerHTML = products.map((p) => `
         <article class="product-card">
           <div class="product-card__media">
             <img src="${p.image}" alt="${p.name}" data-fallback-label="${p.name}" />
@@ -74,7 +77,7 @@
           <div class="product-card__body">
             <span class="product-card__name">${p.name}</span>
             <span class="product-card__bonus">${p.bonus}</span>
-            <span class="product-card__price">${formatPrice(p.price)}</span>
+            <span class="product-card__price">${window.formatPrice(p.price)}</span>
             <button class="btn btn-primary" data-product-id="${p.id}">Comprar</button>
           </div>
         </article>
@@ -82,13 +85,11 @@
 
       grid.querySelectorAll("[data-product-id]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          // CORREGIDO: Se cambia setSelectedProduct por selectProduct
-          selectProduct(btn.getAttribute("data-product-id"));
+          const productId = btn.getAttribute("data-product-id");
+          window.selectProduct(productId);
         });
       });
     }
 
     document.addEventListener("DOMContentLoaded", renderFreeFireGrid);
   </script>
-</body>
-</html>
