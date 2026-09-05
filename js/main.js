@@ -129,3 +129,4 @@ function setButtonLoading(button, isLoading) {
     button.textContent = button.dataset.originalText || button.textContent;
   }
 }
+window.initImageFallbacks = initImageFallbacks;
