@@ -71,3 +71,4 @@ function getSelectedProduct() {
     return null;
   }
 }
+window.createOrder = createOrder;
